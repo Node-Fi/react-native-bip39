@@ -11,8 +11,11 @@ declare type RandomNumberGenerator = (
 
 var DEFAULT_WORDLIST = require("../wordlists/en.json");
 var SPANISH_WORDLIST = require("../wordlists/es.json");
+const PORTUGUESE_WORDLIST = require("../wordlists/pt.json");
+const FRENCH_WORDLIST = require("../wordlists/fr.json");
+const JAPANESE_WORDLIST = require("../wordlists/ja.json");
 
-async function mnemonicToSeed(mnemonic: string, password: string) {
+export async function mnemonicToSeed(mnemonic: string, password: string) {
   var mnemonicBuffer = Buffer.from(mnemonic, "utf8");
   var saltBuffer = Buffer.from(salt(password), "utf8");
   return await pbkdf2.deriveAsync(
@@ -24,12 +27,12 @@ async function mnemonicToSeed(mnemonic: string, password: string) {
   );
 }
 
-async function mnemonicToSeedHex(mnemonic: string, password: string) {
+export async function mnemonicToSeedHex(mnemonic: string, password: string) {
   var seed = await mnemonicToSeed(mnemonic, password);
   return seed.toString("hex");
 }
 
-function mnemonicToEntropy(mnemonic: string, wordlist: string[]) {
+export function mnemonicToEntropy(mnemonic: string, wordlist: string[]) {
   wordlist = wordlist || DEFAULT_WORDLIST;
 
   var words = mnemonic.split(" ");
@@ -68,7 +71,7 @@ function mnemonicToEntropy(mnemonic: string, wordlist: string[]) {
   return entropyBuffer.toString("hex");
 }
 
-function entropyToMnemonic(entropy: string, wordlist: string[]) {
+export function entropyToMnemonic(entropy: string, wordlist: string[]) {
   wordlist = wordlist || DEFAULT_WORDLIST;
 
   var entropyBuffer = Buffer.from(entropy, "hex");
@@ -87,7 +90,7 @@ function entropyToMnemonic(entropy: string, wordlist: string[]) {
   return words.join(" ");
 }
 
-function generateMnemonic(
+export function generateMnemonic(
   strength?: number,
   rng?: RandomNumberGenerator,
   wordlist?: string[]
@@ -109,7 +112,7 @@ function generateMnemonic(
   });
 }
 
-function validateMnemonic(mnemonic: string, wordlist: string[]) {
+export function validateMnemonic(mnemonic: string, wordlist: string[]) {
   try {
     mnemonicToEntropy(mnemonic, wordlist);
   } catch (e) {
@@ -117,6 +120,20 @@ function validateMnemonic(mnemonic: string, wordlist: string[]) {
   }
   return true;
 }
+
+export const wordlists = {
+  french: FRENCH_WORDLIST,
+  FR: FRENCH_WORDLIST,
+  english: DEFAULT_WORDLIST,
+  EN: DEFAULT_WORDLIST,
+  default: DEFAULT_WORDLIST,
+  PT: PORTUGUESE_WORDLIST,
+  portuguese: PORTUGUESE_WORDLIST,
+  spanish: SPANISH_WORDLIST,
+  SP: SPANISH_WORDLIST,
+  japanese: JAPANESE_WORDLIST,
+  JS: JAPANESE_WORDLIST,
+};
 
 function checksumBits(entropyBuffer: Buffer) {
   var hash = createHash("sha256").update(entropyBuffer).digest();
@@ -147,15 +164,12 @@ function lpad(str: string, padString: string, length: number) {
   return str;
 }
 
-module.exports = {
+export default {
   mnemonicToSeed: mnemonicToSeed,
   mnemonicToSeedHex: mnemonicToSeedHex,
   mnemonicToEntropy: mnemonicToEntropy,
   entropyToMnemonic: entropyToMnemonic,
   generateMnemonic: generateMnemonic,
   validateMnemonic: validateMnemonic,
-  wordlists: {
-    EN: DEFAULT_WORDLIST,
-    ES: SPANISH_WORDLIST,
-  },
+  wordlists,
 };
