@@ -3,19 +3,21 @@ var assert = require("assert");
 var pbkdf2 = require("react-native-fast-crypto").pbkdf2;
 var createHash = require("create-hash");
 import { generateSecureRandom } from "react-native-securerandom";
+import DEFAULT_WORDLIST from "../wordlists/en.json";
+import SPANISH_WORDLIST from "../wordlists/es.json";
+import PORTUGUESE_WORDLIST from "../wordlists/pt.json";
+import FRENCH_WORDLIST from "../wordlists/fr.json";
+import JAPANESE_WORDLIST from "../wordlists/ja.json";
 
 declare type RandomNumberGenerator = (
   size: number,
   callback: (err: Error | null, buf: Buffer) => void
 ) => void;
 
-var DEFAULT_WORDLIST = require("../wordlists/en.json");
-var SPANISH_WORDLIST = require("../wordlists/es.json");
-const PORTUGUESE_WORDLIST = require("../wordlists/pt.json");
-const FRENCH_WORDLIST = require("../wordlists/fr.json");
-const JAPANESE_WORDLIST = require("../wordlists/ja.json");
-
-export async function mnemonicToSeed(mnemonic: string, password: string) {
+export async function mnemonicToSeed(
+  mnemonic: string,
+  password: string
+): Promise<Buffer> {
   var mnemonicBuffer = Buffer.from(mnemonic, "utf8");
   var saltBuffer = Buffer.from(salt(password), "utf8");
   return await pbkdf2.deriveAsync(
@@ -27,7 +29,10 @@ export async function mnemonicToSeed(mnemonic: string, password: string) {
   );
 }
 
-export async function mnemonicToSeedHex(mnemonic: string, password: string) {
+export async function mnemonicToSeedHex(
+  mnemonic: string,
+  password: string
+): Promise<string> {
   var seed = await mnemonicToSeed(mnemonic, password);
   return seed.toString("hex");
 }
@@ -71,7 +76,7 @@ export function mnemonicToEntropy(mnemonic: string, wordlist: string[]) {
   return entropyBuffer.toString("hex");
 }
 
-export function entropyToMnemonic(entropy: string, wordlist: string[]) {
+export function entropyToMnemonic(entropy: string, wordlist: string[]): string {
   wordlist = wordlist || DEFAULT_WORDLIST;
 
   var entropyBuffer = Buffer.from(entropy, "hex");
@@ -94,7 +99,7 @@ export function generateMnemonic(
   strength?: number,
   rng?: RandomNumberGenerator,
   wordlist?: string[]
-) {
+): Promise<string> {
   return new Promise((resolve, reject) => {
     strength = strength || 128;
     rng = rng || generateSecureRandom;
@@ -121,7 +126,9 @@ export function validateMnemonic(mnemonic: string, wordlist: string[]) {
   return true;
 }
 
-export const wordlists = {
+export const wordlists: {
+  [language: string]: string[];
+} = {
   french: FRENCH_WORDLIST,
   FR: FRENCH_WORDLIST,
   english: DEFAULT_WORDLIST,
