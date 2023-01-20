@@ -3,11 +3,11 @@ var assert = require("assert");
 var pbkdf2 = require("react-native-fast-crypto").pbkdf2;
 var createHash = require("create-hash");
 import { generateSecureRandom } from "react-native-securerandom";
-import DEFAULT_WORDLIST from "../wordlists/en.json";
-import SPANISH_WORDLIST from "../wordlists/es.json";
-import PORTUGUESE_WORDLIST from "../wordlists/pt.json";
-import FRENCH_WORDLIST from "../wordlists/fr.json";
-import JAPANESE_WORDLIST from "../wordlists/ja.json";
+import DEFAULT_WORDLIST from "./wordlists/en.json";
+import SPANISH_WORDLIST from "./wordlists/es.json";
+import PORTUGUESE_WORDLIST from "./wordlists/pt.json";
+import FRENCH_WORDLIST from "./wordlists/fr.json";
+import JAPANESE_WORDLIST from "./wordlists/ja.json";
 
 declare type RandomNumberGenerator = (
   size: number,

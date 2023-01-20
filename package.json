@@ -33,7 +33,6 @@
     "src",
     "index.ts",
     "lib",
-    "wordlists",
     "!**/__tests__",
     "!**/__fixtures__",
     "!**/__mocks__"
